@@ -138,50 +138,17 @@ except FileNotFoundError:
 
   - 数量前十的字段： 
 
-  - 字段名: #stream_triad                   出现次数: 94146 
-
-  - 字段名: #stream_copy                   出现次数: 94146 
-
-  - 字段名: #fio                                     出现次数: 93701 
-
-  - 字段名: #ls_time                             出现次数: 44230 
-
-  - 字段名: #ping_avg                          出现次数: 32848 
-
+    - 字段名: #stream_triad                   出现次数: 94146 （输入时存在错误，NaN，但检查了并没有问题）
+  - 字段名: #stream_copy                   出现次数: 94146 （输入时存在错误，NaN，但检查了并没有问题） 
+    - 字段名: #fio                                     出现次数: 93701 
+  - 字段名: #ls_time                             出现次数: 44230 （全部值都是18，没有必要预测） 
+    - 字段名: #ping_avg                          出现次数: 32848 
   - 字段名: #vray_render_time          出现次数: 32004 
-
-  - 字段名: #unixbench_cpu              出现次数: 23444 
-
+    - 字段名: #unixbench_cpu              出现次数: 23444 
   - 字段名: #unixbench_context       出现次数: 21977 
-
-  - 字段名: #super_pi_real_time       出现次数: 21005 
-
+    - 字段名: #super_pi_real_time       出现次数: 21005 
   - 字段名: #super_pi_user_time      出现次数: 21005
-
-  - 输出的单一字段例如（提取#unixbench_cpu字段对应的值）：
-
-  - ```python
-    def getValue1(df, field):
-        result_dict_values = {}
-        result_dict_values[field] = []
-        for row in df.itertuples():
-            if field in row.results:
-                try:
-                    result = eval(row.results)[field]
-                    result_dict_values[field].append(result)
-                except:
-                    pass
-        return result_dict_values
-    
-    def getValue2(df, field):
-        result_dict_values = {field: df.loc[df['results'].str.contains(field), 'results'].str.extract(r'\"{}\":\s*(\d+)'.format(field), expand=False).dropna().astype(float).tolist()}
-        return result_dict_values
-    
-    #unixbench_cpu
-    your_field = '#unixbench_cpu'
-    result_dict_values = getValue1(df, your_field)
-    outPutDF = pd.DataFrame(result_dict_values)
-    ```
+    - 输出的单一字段例如（提取#unixbench_cpu字段对应的值）：
 
 
   | index | #unixbench_cpu |
@@ -200,50 +167,77 @@ except FileNotFoundError:
 
 - 后序进展中发现results_key这一列对拟合结果很重要，输入参数变更为dimension中的四个字段加上results_key，输出字段不变
 
-  - ```python
-    def getInput(keyTestT, importantKey):
-        inputList = []
-        keys_to_extract = ['cvm_cpu', 'cvm_memory', 'cvm_cpu_qos', 'cvm_os_type']
-        for i in tqdm(range(len(keyTestT))):
-            results = json.loads(keyTestT.loc[i, 'results'])
-            for result in results:
-                if importantKey in result:
-                    # 将dimension中['cvm_cpu', 'cvm_memory', 'cvm_cpu_qos', 'cvm_os_type']这几个字段的值提取出来
-                    dimension = json.loads(keyTestT.loc[i, 'dimension'])
-                    dimension = json.dumps(dimension)
-                    templist=['cvm_cpu', 'cvm_memory', 'cvm_cpu_qos', 'cvm_os_type']
-                    dimensionJson = json.loads(dimension)
-                    for key in dimensionJson:
-                        if key in templist:
-                            key_value = dimensionJson[key]
-                            if key=='cvm_memory':
-                                key_value=float(key_value.split(' ')[0])
-                            elif key=='cvm_cpu':
-                                key_value=float(key_value)
-                            elif key=='cvm_cpu_qos':
-                                key_value='true'
-                            templist[keys_to_extract.index(key)]=key_value
-                    results_key = keyTestT.loc[i, 'results_key']
-                    templist.append(results_key)
-                    inputList.append(templist)
-                    break
-    
-        # 将inputList转换为DataFrame
-        inputDF = pd.DataFrame(inputList, columns=['cvm_cpu', 'cvm_memory', 'cvm_cpu_qos', 'cvm_os_type', 'results_key'])
-        # 判断cvm_cpu和cvm_memory是否是数字，如果不是数字则填写-1
-        inputDF['cvm_cpu'] = pd.to_numeric(inputDF['cvm_cpu'], errors='coerce').fillna(-1)
-        inputDF['cvm_memory'] = pd.to_numeric(inputDF['cvm_memory'], errors='coerce').fillna(-1)
-        return inputDF
-    ```
-
   - | index | cvm_cpu | cvm_memory | cvm_cpu_qos | cvm_os_type                          | results_key              |
     | ----- | ------- | ---------- | ----------- | ------------------------------------ | ------------------------ |
     | 0     | 8.0     | 40.0       | true        | CentOS Linux release 7.3.1611 (Core) | gcc_oflag=O0,threads=1   |
     | 1     | 8.0     | 40.0       | true        | CentOS Linux release 7.3.1611 (Core) | gcc_oflag=O0,threads=8   |
     | 2     | 124.0   | 424.0      | true        | CentOS Linux release 8.2.2004 (Core) | gcc_oflag=O0,threads=1   |
     | 3     | 124.0   | 424.0      | true        | CentOS Linux release 8.2.2004 (Core) | gcc_oflag=O0,threads=124 |
+  
+- 获得输入输出
 
+  - ```python
+    def get_input_output(Tdf, field):
+        df = Tdf.copy()
+        input_list = []
+        output_list = []
+        for i in range(len(df)):
+            row = df.iloc[i]
+            if field in row['results']:
+                result_dict = json.loads(row['results'])
+                if field in result_dict:
+                    dimension_dict = json.loads(row['dimension'])
+                    input_list.append([
+                        float(dimension_dict['cvm_cpu']) if 'cvm_cpu' in dimension_dict else -1,
+                        float(dimension_dict['cvm_memory'].split()[0]) if 'cvm_memory' in dimension_dict else -1,
+                        dimension_dict.get('cvm_cpu_qos', 'false') == 'true',
+                        dimension_dict.get('cvm_os_type', ''),
+                        row['results_key']
+                    ])
+                    output_list.append(result_dict[field])
+        input_df = pd.DataFrame(input_list, columns=['cvm_cpu', 'cvm_memory', 'cvm_cpu_qos', 'cvm_os_type', 'results_key'])
+        output_df = pd.DataFrame({field: output_list})
+        return input_df, output_df
     
+    
+    def get_input_output_Speed(Tdf, field):
+        # 选择需要提取的字段
+        df = Tdf.copy()
+        keys_to_extract = ['cvm_cpu', 'cvm_memory', 'cvm_cpu_qos', 'cvm_os_type']
+    
+        # 对dimension列进行预处理
+        df['dimension'] = df['dimension'].apply(lambda x: json.loads(x))
+        for key in keys_to_extract:
+            df[key] = df['dimension'].apply(lambda x: x.get(key, None))
+    
+        # 对cvm_memory和cvm_cpu进行数值化处理
+        df[['cvm_cpu', 'cvm_memory']] = df[['cvm_cpu', 'cvm_memory']].apply(pd.to_numeric, errors='coerce').fillna(-1)
+    
+        # 筛选出符合要求的行
+        df_filtered = df[df['results'].str.contains(field)]
+    
+        # 从results中提取出field对应的值
+        df_output = pd.DataFrame(df_filtered['results'].apply(lambda x: json.loads(x)).tolist(), index=df_filtered.index)
+        df_output = df_output[field]
+    
+        # 将input和output分别转成dataframe
+        df_input = df_filtered[keys_to_extract + ['results_key']]
+        df_output = pd.DataFrame(df_output)
+    
+        return df_input, df_output
+    
+    #unixbench_cpu
+    your_field = '#unixbench_cpu'
+    inPutDF, outPutDF = get_input_output_Speed(df, your_field)
+    
+    print(inPutDF.shape)
+    print(outPutDF.shape)
+    (23444, 5)
+    (23444, 1)
+    ```
+
+
+
 
 ### 特征编码
 
