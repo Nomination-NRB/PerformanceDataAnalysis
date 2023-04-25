@@ -139,15 +139,15 @@ except FileNotFoundError:
   - 数量前十的字段： 
 
     - 字段名: #stream_triad                   出现次数: 94146 （输入时存在错误，NaN，但检查了并没有问题）
-  - 字段名: #stream_copy                   出现次数: 94146 （输入时存在错误，NaN，但检查了并没有问题） 
+    - 字段名: #stream_copy                   出现次数: 94146 （输入时存在错误，NaN，但检查了并没有问题） 
     - 字段名: #fio                                     出现次数: 93701 
-  - 字段名: #ls_time                             出现次数: 44230 （全部值都是18，没有必要预测） 
+    - 字段名: #ls_time                             出现次数: 44230 （全部值都是18，没有必要预测） 
     - 字段名: #ping_avg                          出现次数: 32848 
-  - 字段名: #vray_render_time          出现次数: 32004 
+    - 字段名: #vray_render_time          出现次数: 32004 
     - 字段名: #unixbench_cpu              出现次数: 23444 
-  - 字段名: #unixbench_context       出现次数: 21977 
-    - 字段名: #super_pi_real_time       出现次数: 21005 
-  - 字段名: #super_pi_user_time      出现次数: 21005
+    - 字段名: #unixbench_context       出现次数: 21977 
+    - 字段名: #super_pi_real_time       出现次数: 21005 （数量相同成对出现，可作为多输出）
+    - 字段名: #super_pi_user_time      出现次数: 21005（数量相同成对出现，可作为多输出）
     - 输出的单一字段例如（提取#unixbench_cpu字段对应的值）：
 
 
