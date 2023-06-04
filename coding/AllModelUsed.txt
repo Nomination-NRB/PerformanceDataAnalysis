@@ -1,0 +1,383 @@
+import torch.nn as nn
+import torch
+from torch.utils.data import Dataset, DataLoader
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
+
+class MyDataset(Dataset):
+    def __init__(self, input, output):
+        self.input = input
+        self.output = output
+        
+    def __len__(self):
+        return len(self.input)
+    
+    def __getitem__(self, idx):
+        x = torch.tensor(self.input[idx], dtype=torch.float32)  
+        y = torch.tensor(self.output[idx], dtype=torch.float32)  
+        return x, y
+
+
+class MyModel(nn.Module):
+    def __init__(self, input_size, output_size):
+        super(MyModel, self).__init__()
+        self.fc1 = nn.Linear(input_size, 256)
+        self.fc2 = nn.Linear(256, 256)
+        self.fc3 = nn.Linear(256, output_size)
+        self.relu = nn.ReLU()
+        self.dropout = nn.Dropout(0.5)
+        self.batch_norm1 = nn.BatchNorm1d(256)
+        self.batch_norm2 = nn.BatchNorm1d(256)
+        
+    def forward(self, x):
+        x = self.fc1(x)
+        x = self.relu(x)
+        x = self.batch_norm1(x)
+        x = self.dropout(x)
+        x = self.fc2(x)
+        x = self.relu(x)
+        x = self.batch_norm2(x)
+        x = self.dropout(x)
+        x = self.fc3(x)
+        return x
+
+
+
+
+
+import torch
+from torch.utils.data import Dataset, DataLoader
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
+
+class MyModel(torch.nn.Module):
+    def __init__(self, input_size, output_size):
+        super(MyModel, self).__init__()
+        self.fc1 = torch.nn.Linear(input_size, 64)
+        self.fc2 = torch.nn.Linear(64, 64)
+        self.fc3 = torch.nn.Linear(64, output_size)
+        self.relu = torch.nn.ReLU()
+        self.dropout = torch.nn.Dropout(0.8)
+        
+    def forward(self, x):
+        x = self.fc1(x)
+        x = self.relu(x)
+        x = self.dropout(x)
+        x = self.fc2(x)
+        x = self.relu(x)
+        x = self.dropout(x)
+        x = self.fc3(x)
+        return x
+
+class MyModel(torch.nn.Module):
+    def __init__(self, input_size, output_size):
+        super(MyModel, self).__init__()
+        self.fc1 = torch.nn.Linear(input_size, 256)
+        self.fc2 = torch.nn.Linear(256, 256)
+        self.fc3 = torch.nn.Linear(256, output_size)
+        self.relu = torch.nn.ReLU()
+        self.dropout = torch.nn.Dropout(0.5)
+        
+    def forward(self, x):
+        x = self.fc1(x)
+        x = self.relu(x)
+        x = self.dropout(x)
+        x = self.fc2(x)
+        x = self.relu(x)
+        x = self.dropout(x)
+        x = self.fc3(x)
+        return x
+
+
+
+import torch.nn as nn
+
+class MyModel(nn.Module):
+    def __init__(self, input_size, output_size):
+        super(MyModel, self).__init__()
+        self.input_size = input_size
+        self.output_size = output_size
+        
+        self.fc1 = nn.Linear(input_size, 256)
+        self.relu1 = nn.ReLU()
+        self.fc2 = nn.Linear(256, 512)
+        self.relu2 = nn.ReLU()
+        self.fc3 = nn.Linear(512, 256)
+        self.relu3 = nn.ReLU()
+        self.fc4 = nn.Linear(256, 128)
+        self.relu4 = nn.ReLU()
+        self.fc5 = nn.Linear(128, 64)
+        self.relu5 = nn.ReLU()
+        self.fc6 = nn.Linear(64, 16)
+        self.relu6 = nn.ReLU()
+        self.fc7 = nn.Linear(16, output_size)
+        self.dropout = torch.nn.Dropout(0.5)
+        
+    def forward(self, x):
+        x = self.fc1(x)
+        x = self.relu1(x)
+        x = self.dropout(x)
+        x = self.fc2(x)
+        x = self.relu2(x)
+        x = self.dropout(x)
+        x = self.fc3(x)
+        x = self.relu3(x)
+        x = self.dropout(x)
+        x = self.fc4(x)
+        x = self.relu4(x)
+        x = self.dropout(x)
+        x = self.fc5(x)
+        x = self.relu5(x)
+        x = self.dropout(x)
+        x = self.fc6(x)
+        x = self.relu6(x)
+        x = self.dropout(x)
+        x = self.fc7(x)
+        return x
+
+
+import torch.nn as nn
+
+class MyModel(nn.Module):
+    def __init__(self, input_size, output_size):
+        super(MyModel, self).__init__()
+        self.input_size = input_size
+        self.output_size = output_size
+        
+        self.fc1 = nn.Linear(input_size, 256)
+        self.bn1 = nn.BatchNorm1d(256)
+        self.relu1 = nn.ReLU()
+        
+        self.fc2 = nn.Linear(256, 512)
+        self.bn2 = nn.BatchNorm1d(512)
+        self.relu2 = nn.ReLU()
+        
+        self.fc3 = nn.Linear(512, 256)
+        self.bn3 = nn.BatchNorm1d(256)
+        self.relu3 = nn.ReLU()
+        
+        self.fc4 = nn.Linear(256, 128)
+        self.bn4 = nn.BatchNorm1d(128)
+        self.relu4 = nn.ReLU()
+        
+        self.fc5 = nn.Linear(128, 64)
+        self.bn5 = nn.BatchNorm1d(64)
+        self.relu5 = nn.ReLU()
+        
+        self.fc6 = nn.Linear(64, 16)
+        self.bn6 = nn.BatchNorm1d(16)
+        self.relu6 = nn.ReLU()
+        
+        self.fc7 = nn.Linear(16, output_size)
+        self.dropout = nn.Dropout(0.5)
+        
+    def forward(self, x):
+        x = self.fc1(x)
+        x = self.bn1(x)
+        x = self.relu1(x)
+        x = self.dropout(x)
+        
+        x = self.fc2(x)
+        x = self.bn2(x)
+        x = self.relu2(x)
+        x = self.dropout(x)
+        
+        x = self.fc3(x)
+        x = self.bn3(x)
+        x = self.relu3(x)
+        x = self.dropout(x)
+        
+        x = self.fc4(x)
+        x = self.bn4(x)
+        x = self.relu4(x)
+        x = self.dropout(x)
+        
+        x = self.fc5(x)
+        x = self.bn5(x)
+        x = self.relu5(x)
+        x = self.dropout(x)
+        
+        x = self.fc6(x)
+        x = self.bn6(x)
+        x = self.relu6(x)
+        x = self.dropout(x)
+        
+        x = self.fc7(x)
+        return x
+
+
+
+import torch.nn as nn
+
+class MyModel(nn.Module):
+    def __init__(self, input_size, output_size):
+        super(MyModel, self).__init__()
+        self.input_size = input_size
+        self.output_size = output_size
+        
+        self.fc1 = nn.Linear(input_size, 256)
+        self.bn1 = nn.BatchNorm1d(256)
+        self.relu1 = nn.ReLU()
+        
+        self.fc2 = nn.Linear(256, 512)
+        self.bn2 = nn.BatchNorm1d(512)
+        self.relu2 = nn.ReLU()
+        
+        self.fc3 = nn.Linear(512, 256)
+        self.bn3 = nn.BatchNorm1d(256)
+        self.relu3 = nn.ReLU()
+        
+        self.fc4 = nn.Linear(256, 128)
+        self.bn4 = nn.BatchNorm1d(128)
+        self.relu4 = nn.ReLU()
+        
+        self.fc5 = nn.Linear(128, 64)
+        self.bn5 = nn.BatchNorm1d(64)
+        self.relu5 = nn.ReLU()
+        
+        self.fc6 = nn.Linear(64, 16)
+        self.bn6 = nn.BatchNorm1d(16)
+        self.relu6 = nn.ReLU()
+        
+        self.fc7 = nn.Linear(16, output_size)
+        self.dropout = nn.Dropout(0.5)
+        
+        # 初始化权重
+        nn.init.xavier_uniform_(self.fc1.weight)
+        nn.init.xavier_uniform_(self.fc2.weight)
+        nn.init.xavier_uniform_(self.fc3.weight)
+        nn.init.xavier_uniform_(self.fc4.weight)
+        nn.init.xavier_uniform_(self.fc5.weight)
+        nn.init.xavier_uniform_(self.fc6.weight)
+        nn.init.xavier_uniform_(self.fc7.weight)
+        
+    def forward(self, x):
+        x = self.fc1(x)
+        x = self.bn1(x)
+        x = self.relu1(x)
+        x = self.dropout(x)
+        
+        x = self.fc2(x)
+        x = self.bn2(x)
+        x = self.relu2(x)
+        x = self.dropout(x)
+        
+        x = self.fc3(x)
+        x = self.bn3(x)
+        x = self.relu3(x)
+        x = self.dropout(x)
+        
+        x = self.fc4(x)
+        x = self.bn4(x)
+        x = self.relu4(x)
+        x = self.dropout(x)
+        
+        x = self.fc5(x)
+        x = self.bn5(x)
+        x = self.relu5(x)
+        x = self.dropout(x)
+        
+        x = self.fc6(x)
+        x = self.bn6(x)
+        x = self.relu6(x)
+        x = self.dropout(x)
+        
+        x = self.fc7(x)
+        return x
+
+
+
+import torch
+import torch.nn as nn
+
+class ResidualBlock(nn.Module):
+    def __init__(self, input_size, output_size):
+        super(ResidualBlock, self).__init__()
+        self.fc1 = nn.Linear(input_size, output_size)
+        self.bn1 = nn.BatchNorm1d(output_size)
+        self.relu1 = nn.ReLU()
+        self.fc2 = nn.Linear(output_size, output_size)
+        self.bn2 = nn.BatchNorm1d(output_size)
+
+    def forward(self, x):
+        identity = x
+        x = self.fc1(x)
+        x = self.bn1(x)
+        x = self.relu1(x)
+        x = self.fc2(x)
+        x = self.bn2(x)
+        x += identity  # 残差连接
+        x = self.relu1(x)
+        return x
+
+class MyModel(nn.Module):
+    def __init__(self, input_size, output_size):
+        super(MyModel, self).__init__()
+        self.input_size = input_size
+        self.output_size = output_size
+        self.fc1 = nn.Linear(input_size, 512)
+        self.bn1 = nn.BatchNorm1d(512)
+        self.relu1 = nn.ReLU()
+        self.residual_blocks = nn.ModuleList([
+            ResidualBlock(512, 512) for _ in range(5)
+        ])
+        self.fc2 = nn.Linear(512, output_size)
+        self.dropout = nn.Dropout(0.2)
+        nn.init.xavier_uniform_(self.fc1.weight)
+        nn.init.zeros_(self.fc1.bias)
+        nn.init.xavier_uniform_(self.fc2.weight)
+        nn.init.zeros_(self.fc2.bias)
+
+    def forward(self, x):
+        x = self.fc1(x)
+        x = self.bn1(x)
+        x = self.relu1(x)
+        for block in self.residual_blocks:
+            x = block(x)
+        x = self.dropout(x)
+        x = self.fc2(x)
+        return x
+
+
+
+
+def train(model, dataloader, criterion, optimizer, device):
+    model.train()
+    running_loss = 0.0
+    for i, (inputs, targets) in enumerate(dataloader):
+        inputs, targets = inputs.to(device), targets.to(device)
+        optimizer.zero_grad()
+        outputs = model(inputs)
+        
+        # Create a mask to filter out zero targets
+        mask = (targets != 0).float()
+        masked_outputs = outputs * mask
+        masked_targets = targets * mask
+        
+        loss = criterion(masked_outputs, masked_targets)
+        loss.backward()
+        optimizer.step()
+        running_loss += loss.item()
+    return running_loss / len(dataloader)
+
+
+def evaluate(model, dataloader, criterion, device):
+    model.eval()
+    running_loss = 0.0
+    with torch.no_grad():
+        for inputs, targets in dataloader:
+            inputs, targets = inputs.to(device), targets.to(device)
+            outputs = model(inputs)
+            
+            # Create a mask to filter out zero targets
+            mask = (targets != 0).float()
+            masked_outputs = outputs * mask
+            masked_targets = targets * mask
+            
+            loss = criterion(masked_outputs, masked_targets)
+            running_loss += loss.item()
+    return running_loss / len(dataloader)
+
+
+
+
